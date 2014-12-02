@@ -84,7 +84,7 @@ expect(^{
 Best Practices
 ---
 
-### AQSEvent を用いる
+### AQSEvent, AQSEventAggregator を用いる
 
 `AQSEvent` を用いることで簡単に Measurement Event を発行することが出来ます。
 
@@ -94,7 +94,36 @@ Best Practices
 }];
 ```
 
-AquaSupport/AQSEvent : https://github.com/AquaSupport/AQSEvent
+また、`AQSEventAggregator` を用いることで、Measurement Events をフィルタリングしての購読が可能です。
+
+```objc
+@interface AppEventAggregator : AQSEventAggregator
+@end
+
+@implementation
+
+// @override
+- (NSArray *)whiteListForEvents {
+    return @{
+        @"app/run_at_first",
+        @"app/did_become_active",
+        @"app/permission/photo_library/granted"
+    };
+}
+
+- (void)didReceiveEvent:(NSString *)eventName args:(NSDictionary *)eventArgs {
+    [SomeAnalytics trackEvent:eventName args:eventArgs];
+}
+
+@end
+```
+
+```objc
+[[AppEventAggregator sharedAggregator] startAggregation];
+```
+
+- AquaSupport/AQSEvent : https://github.com/AquaSupport/AQSEvent
+- AquaSupport/AQSEventAggregator : https://github.com/AquaSupport/AQSEventAggregator
 
 ### イベント送信を Helper クラスでラップする
 
@@ -122,6 +151,8 @@ Measurement Events をリストした Header であることを明示的にす�
 NSString *const events_SomeModuleSomeEventName = @"somename";
 ```
 
+モジュールを使う側は、このヘッダーから必要なイベント名を取捨選択し、Aggregator のホワイトリストに含めていく形になります。
+
 Conclusion
 ---
 
@@ -134,4 +165,5 @@ References
 ---
 
 - AquaSupport/AQSEvent : https://github.com/AquaSupport/AQSEvent
+- AquaSupport/AQSEventAggregator : https://github.com/AquaSupport/AQSEventAggregator
 - Xcode6で追加された、XCTestの新機能 - Qiita : http://qiita.com/nomadmonad/items/d2c283f9b9ad33a2b32a
