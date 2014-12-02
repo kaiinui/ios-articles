@@ -130,6 +130,8 @@ Best Practices
 実際的には、イベントの名前、パラメータのスキーマやキーに間違いが生じやすいため、ヘルパークラスでラップすると良いでしょう。
 
 ```objc
+// SOMEAnalytics.m
+
 + (void)postSomeEventWithValue:(NSString *)value {
 	[AQSEvent event:@"somename" args:@{
 		@"somearg": value
@@ -137,7 +139,7 @@ Best Practices
 }
 ```
 
-### モジュールでは、発行する Event を　Header でリストしておく
+### モジュールでは、発行する Event を Header でリストしておく
 
 Measurement Events をリストした Header であることを明示的にするため、`events_` Prefix を付け、モジュールの名称を次に続けることが推奨されます。
 
